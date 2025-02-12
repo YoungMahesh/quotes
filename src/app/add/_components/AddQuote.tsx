@@ -48,7 +48,7 @@ export default function AddQuote({
 
   async function onSubmit(values: z.infer<typeof formSchema>) {
     try {
-      await addQuote(values.quote, 1);
+      await addQuote(values.quote.trim(), 1);
       toast.success("Quote added successfully!");
       form.reset();
     } catch (error) {

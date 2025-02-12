@@ -5,7 +5,7 @@ import { type Metadata } from "next";
 import { Toaster } from "sonner";
 
 export const metadata: Metadata = {
-  title: "Quotes",
+  title: "Quote",
   description: "Random Quotes",
   icons: [{ rel: "icon", url: "/favicon.ico" }],
 };
