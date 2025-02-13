@@ -2,7 +2,7 @@ import AddQuote from "./_components/AddQuote";
 import { db } from "@/server/db";
 import { authorsTable, quotesTable } from "@/server/db/schema";
 import { revalidatePath } from "next/cache";
-import { Metadata } from "next";
+import type { Metadata } from "next";
 import { Button } from "@/components/ui/button";
 import Link from "next/link";
 import { cookies } from "next/headers";

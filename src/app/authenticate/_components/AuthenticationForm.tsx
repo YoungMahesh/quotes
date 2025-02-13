@@ -7,7 +7,7 @@ export default function AuthenticationForm({
   validateKey,
 }: {
   validateKey: (
-    _prevState: any,
+    _prevState: { error: string },
     formData: FormData,
   ) => Promise<{ error: string }>;
 }) {

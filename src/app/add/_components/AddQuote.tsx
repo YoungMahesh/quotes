@@ -36,7 +36,7 @@ export default function AddQuote({
   addQuote,
 }: {
   authorsList: { id: number; name: string }[];
-  addQuote(quote: string, authorId: number): Promise<void>;
+  addQuote: (quote: string, authorId: number) => Promise<void>;
 }) {
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
@@ -46,15 +46,15 @@ export default function AddQuote({
     },
   });
 
-  async function onSubmit(values: z.infer<typeof formSchema>) {
+  const onSubmit = async (values: z.infer<typeof formSchema>) => {
     try {
       await addQuote(values.quote.trim(), 1);
       toast.success("Quote added successfully!");
       form.reset();
-    } catch (error) {
+    } catch {
       toast.error("Failed to add quote");
     }
-  }
+  };
 
   return (
     <Form {...form}>

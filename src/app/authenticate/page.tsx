@@ -2,7 +2,7 @@ import { redirect } from "next/navigation";
 import { env } from "@/env";
 import { cookies } from "next/headers";
 import AuthenticationForm from "./_components/AuthenticationForm";
-import { Metadata } from "next";
+import type { Metadata } from "next";
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
 
@@ -11,7 +11,7 @@ export const metadata: Metadata = {
 };
 
 export default function AuthenticatePage() {
-  async function validateKey(_prevState: any, formData: FormData) {
+  async function validateKey(_prevState: { error: string }, formData: FormData) {
     "use server";
 
     const key = formData.get("key");
