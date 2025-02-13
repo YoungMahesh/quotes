@@ -21,13 +21,17 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import * as z from "zod";
 import { useForm } from "react-hook-form";
 import { toast } from "sonner";
+import { useActionState } from "react";
 
 const formSchema = z.object({
   quote: z.string().min(2, {
     message: "Quote must be at least 2 characters.",
   }),
-  author: z.string().min(2, {
-    message: "Author must be at least 2 characters.",
+  author: z.object({
+    id: z.number(),
+    name: z.string().min(2, {
+      message: "Author must be at least 2 characters.",
+    }),
   }),
 });
 
@@ -42,26 +46,32 @@ export default function AddQuote({
     resolver: zodResolver(formSchema),
     defaultValues: {
       quote: "",
-      author: "",
+      author: { id: 0, name: "" },
     },
   });
 
-  const onSubmit = async (values: z.infer<typeof formSchema>) => {
+  const storeQuote = async (
+    _prevState: undefined,
+    _formData: FormData,
+  ): Promise<undefined> => {
     try {
-      await addQuote(values.quote.trim(), 1);
+      const values = form.getValues();
+      if (!values.quote) throw new Error("Quote is empty");
+      if (!values.author.id) throw new Error("Author is empty");
+      await addQuote(values.quote.trim(), values.author.id);
       toast.success("Quote added successfully!");
       form.reset();
-    } catch {
+    } catch (err) {
+      console.error(err);
       toast.error("Failed to add quote");
     }
   };
 
+  const [, formAction, isPending] = useActionState(storeQuote, undefined);
+
   return (
     <Form {...form}>
-      <form
-        onSubmit={form.handleSubmit(onSubmit)}
-        className="mx-auto max-w-2xl space-y-6 p-6"
-      >
+      <form action={formAction} className="mx-auto max-w-2xl space-y-6 p-6">
         <FormField
           control={form.control}
           name="quote"
@@ -71,7 +81,7 @@ export default function AddQuote({
               <FormControl>
                 <Textarea
                   placeholder="Enter quote here"
-                  className="min-h-[150px] resize-y"
+                  className="min-h-[150px] resize-y md:text-lg"
                   {...field}
                 />
               </FormControl>
@@ -86,13 +96,21 @@ export default function AddQuote({
             <FormItem>
               <FormLabel>Author</FormLabel>
               <FormControl>
-                <Select onValueChange={field.onChange} value={field.value}>
+                <Select
+                  onValueChange={(value) => {
+                    const selectedAuthor = authorsList.find(
+                      (author) => author.id.toString() === value,
+                    );
+                    field.onChange(selectedAuthor || { id: 0, name: "" });
+                  }}
+                  value={field.value.id !== 0 ? field.value.id.toString() : ""}
+                >
                   <SelectTrigger>
                     <SelectValue placeholder="Select an author" />
                   </SelectTrigger>
                   <SelectContent>
                     {authorsList.map((author) => (
-                      <SelectItem key={author.id} value={author.name}>
+                      <SelectItem key={author.id} value={author.id.toString()}>
                         {author.name}
                       </SelectItem>
                     ))}
@@ -104,7 +122,9 @@ export default function AddQuote({
           )}
         />
         <div className="flex justify-end">
-          <Button type="submit">Submit</Button>
+          <Button type="submit" disabled={isPending}>
+            {isPending ? "Submitting..." : "Submit"}
+          </Button>
         </div>
       </form>
     </Form>
