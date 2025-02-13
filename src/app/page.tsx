@@ -1,11 +1,14 @@
-import { Button } from "@/components/ui/button";
 import { db } from "@/server/db";
 import { quotesTable, authorsTable } from "@/server/db/schema";
 import { sql } from "drizzle-orm";
-import Link from "next/link";
+import HomeBtns from "./_components/HomeBtns";
+
+// By default, Next.js will attempt to render a static page. But we want to ensure a new random quote is fetched
+// on each request. This can be done by setting the dynamic property to 'force-dynamic'.
+export const dynamic = "force-dynamic";
 
 export default async function HomePage() {
-  const randomQuote = await db
+  const quoteFromDb = await db
     .select({
       content: quotesTable.content,
       authorName: authorsTable.name,
@@ -17,23 +20,26 @@ export default async function HomePage() {
     .get();
 
   return (
-    <main className="relative flex min-h-screen flex-col items-center justify-center p-24">
-      <Link
-        href="/add"
-        className="absolute right-4 top-4 rounded px-4 py-2 font-bold"
-      >
-        <Button variant="default">Add</Button>
-      </Link>
-      {randomQuote ? (
-        <div className="text-center">
-          <blockquote className="mb-4 text-2xl italic">
-            &quot;{randomQuote.content}&quot;
-          </blockquote>
-          <p className="text-xl font-semibold">- {randomQuote.authorName}</p>
-        </div>
-      ) : (
-        <p>No quotes found</p>
-      )}
+    <main className="grid min-h-screen place-items-center">
+      {/* by using 'absolute', we stop <HomeBtns> component affecting the center position of the quote */}
+      <nav className="absolute left-0 right-0 top-0">
+        <HomeBtns quote={quoteFromDb} />
+      </nav>
+
+      <div className="text-center p-2">
+        {quoteFromDb ? (
+          <>
+            <blockquote className="mb-4 text-2xl italic">
+              &quot;{quoteFromDb.content}&quot;
+            </blockquote>
+            <p className="mb-4 text-xl font-semibold">
+              - {quoteFromDb.authorName}
+            </p>
+          </>
+        ) : (
+          <p>No quotes found</p>
+        )}
+      </div>
     </main>
   );
 }
