@@ -5,22 +5,35 @@ import { revalidatePath } from "next/cache";
 import { Metadata } from "next";
 import { Button } from "@/components/ui/button";
 import Link from "next/link";
+import { cookies } from "next/headers";
+import { redirect } from "next/navigation";
 
 export const metadata: Metadata = {
-  title: "Add Quote",
+  title: "Add | Quote",
 };
 
 export default async function AddPage() {
   const authorsList = await db.select().from(authorsTable);
   return (
-    <main className="relative flex min-h-screen flex-col items-center p-24">
-      <Link
-        href="/"
-        className="absolute right-4 top-4 rounded px-4 py-2 font-bold"
-      >
-        <Button variant="default">Home</Button>
-      </Link>
-      <div className="w-full max-w-xl">
+    <main className="flex min-h-screen flex-col items-center p-4">
+      <div className="flex w-full items-center justify-between">
+        <Link href="/">
+          <Button variant="default">Home</Button>
+        </Link>
+
+        <form
+          action={async () => {
+            "use server";
+            (await cookies()).delete("admin-key");
+            redirect("/authenticate");
+          }}
+        >
+          <Button variant="destructive">
+            Sign Out
+          </Button>
+        </form>
+      </div>
+      <div className="w-full max-w-xl mt-8">
         <AddQuote authorsList={authorsList} addQuote={addQuote} />
       </div>
     </main>

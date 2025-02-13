@@ -9,6 +9,7 @@ export const env = createEnv({
   server: {
     TURSO_CONNECTION_URL: z.string().url(),
     TURSO_AUTH_TOKEN: z.string(),
+    ADMIN_KEY: z.string().min(5),
     NODE_ENV: z
       .enum(["development", "test", "production"])
       .default("development"),
@@ -30,6 +31,7 @@ export const env = createEnv({
   runtimeEnv: {
     TURSO_CONNECTION_URL: process.env.TURSO_CONNECTION_URL,
     TURSO_AUTH_TOKEN: process.env.TURSO_AUTH_TOKEN,
+    ADMIN_KEY: process.env.ADMIN_KEY,
     NODE_ENV: process.env.NODE_ENV,
     // NEXT_PUBLIC_CLIENTVAR: process.env.NEXT_PUBLIC_CLIENTVAR,
   },
