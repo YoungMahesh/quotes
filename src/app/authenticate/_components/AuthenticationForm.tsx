@@ -11,7 +11,9 @@ export default function AuthenticationForm({
     formData: FormData,
   ) => Promise<{ error: string }>;
 }) {
-  const [state, formAction] = useActionState(validateKey, { error: "" });
+  const [state, formAction, isPending] = useActionState(validateKey, {
+    error: "",
+  });
 
   return (
     <div className="mx-auto mt-20 max-w-md rounded-lg border p-6">
@@ -24,11 +26,11 @@ export default function AuthenticationForm({
           className="w-full"
           required
         />
-        <Button type="submit" className="w-full">
-          Authenticate
+        <Button type="submit" className="w-full" disabled={isPending}>
+          {isPending ? "Authenticating..." : "Authenticate"}
         </Button>
         {state.error.length > 0 && (
-          <p className="text-red-500">{state.error}</p>
+          <p className="text-center text-red-500">{state.error}</p>
         )}
       </form>
     </div>
