@@ -60,7 +60,8 @@ export default function AddQuote({
       if (!values.author.id) throw new Error("Author is empty");
       await addQuote(values.quote.trim(), values.author.id);
       toast.success("Quote added successfully!");
-      form.reset();
+      // Reset only the quote field, keeping the author
+      form.setValue('quote', '');
     } catch (err) {
       console.error(err);
       toast.error("Failed to add quote");
