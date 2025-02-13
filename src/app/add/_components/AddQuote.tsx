@@ -101,7 +101,7 @@ export default function AddQuote({
                     const selectedAuthor = authorsList.find(
                       (author) => author.id.toString() === value,
                     );
-                    field.onChange(selectedAuthor || { id: 0, name: "" });
+                    field.onChange(selectedAuthor ?? { id: 0, name: "" });
                   }}
                   value={field.value.id !== 0 ? field.value.id.toString() : ""}
                 >
